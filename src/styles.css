@@ -223,3 +223,16 @@ button, input, select { font-family: inherit; }
 
 /* 오류 배너 */
 .error-banner { padding: 16px; color: var(--dot-stale); font-size: 13px; }
+
+/* ── 온보딩 ── */
+.onboarding { min-height: 100%; display: flex; align-items: center; justify-content: center; padding: 24px; background: var(--bg); }
+.onboarding__card { width: 100%; max-width: 420px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-pop); padding: 28px; display: grid; gap: 14px; }
+.onboarding__title { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+.onboarding__sub { margin: 0; color: var(--text-secondary); font-size: 13px; }
+.onboarding__field { display: grid; gap: 5px; font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+.onboarding__field input { font-size: 13px; padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); }
+.onboarding__field input:focus { outline: none; border-color: var(--accent); }
+.onboarding__hint { font-weight: 400; color: var(--text-tertiary); font-size: 11px; }
+.onboarding__note { margin: 2px 0 0; font-size: 11.5px; color: var(--text-tertiary); line-height: 1.5; }
+.onboarding__note code { background: var(--surface-sunken); border: 1px solid var(--border); border-radius: 4px; padding: 0 4px; font-size: 11px; }
+.onboarding__start { justify-self: stretch; padding: 9px; font-size: 13px; margin-top: 4px; }
