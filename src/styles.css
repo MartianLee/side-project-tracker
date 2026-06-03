@@ -251,3 +251,8 @@ button, input, select { font-family: inherit; }
 /* 비활성 버튼 */
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .btn:disabled:hover { background: var(--accent); }
+
+/* 언어 토글 */
+.lang-toggle { display: inline-flex; gap: 4px; align-items: center; }
+.lang-toggle .seg { padding: 3px 8px; font-size: 11px; }
+.onboarding__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }

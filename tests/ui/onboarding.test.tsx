@@ -12,7 +12,7 @@ describe('Onboarding', () => {
     await waitFor(() => expect(screen.getByText('시작하기')).not.toBeDisabled());
     fireEvent.change(screen.getByLabelText('워크스페이스 폴더'), { target: { value: '/Users/you/dev' } });
     fireEvent.click(screen.getByText('시작하기'));
-    expect(onComplete).toHaveBeenCalledWith({ workspaceDir: '/Users/you/dev', githubCutoff: '2025-06-01' });
+    expect(onComplete).toHaveBeenCalledWith({ workspaceDir: '/Users/you/dev', githubCutoff: '2025-06-01', lang: 'ko' });
   });
 
   it('blocks start as a prerequisite until gh is ready', async () => {

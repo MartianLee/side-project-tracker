@@ -1,12 +1,9 @@
-import { MoodFilter, SortMode, SORT_LABELS } from '../domain/filter';
+import { MoodFilter, SortMode } from '../domain/filter';
 import { FUN_TYPES, FunType } from '../domain/types';
+import { useLang, LANGS, LANG_LABEL } from '../i18n';
 import { TagChip } from './TagChip';
 
 const SORT_MODES: SortMode[] = ['recent', 'launched', 'neglect'];
-
-const FUN_LABEL: Record<FunType, string> = {
-  '신규창작': '🆕 신규창작', '업그레이드': '⬆️ 업그레이드', '실험': '🧪 실험', '마무리': '🏁 마무리',
-};
 
 export function MoodBar({
   filter, allTopics, sortMode, lastSyncAt, offline, onChange, onSortChange, onSync, onDice,
@@ -21,22 +18,24 @@ export function MoodBar({
   onSync: () => void;
   onDice: () => void;
 }) {
+  const { t, lang, setLang } = useLang();
+
   function toggleFun(ft: FunType) {
     onChange({
       ...filter,
       funTypes: filter.funTypes.includes(ft) ? filter.funTypes.filter((x) => x !== ft) : [...filter.funTypes, ft],
     });
   }
-  function toggleTopic(t: string) {
+  function toggleTopic(tp: string) {
     onChange({
       ...filter,
-      topics: filter.topics.includes(t) ? filter.topics.filter((x) => x !== t) : [...filter.topics, t],
+      topics: filter.topics.includes(tp) ? filter.topics.filter((x) => x !== tp) : [...filter.topics, tp],
     });
   }
 
   return (
     <div className="toolbar">
-      <span className="toolbar__label">지금 기분</span>
+      <span className="toolbar__label">{t.moodLabel}</span>
       {FUN_TYPES.map((ft) => (
         <button
           key={ft}
@@ -44,29 +43,33 @@ export function MoodBar({
           className={`seg${filter.funTypes.includes(ft) ? ' is-on' : ''}`}
           onClick={() => toggleFun(ft)}
         >
-          {FUN_LABEL[ft]}
+          {t.funLabel[ft]}
         </button>
       ))}
-      {allTopics.length > 0 && <span className="toolbar__label" style={{ marginLeft: 4 }}>주제</span>}
-      {allTopics.map((t) => (
-        <TagChip key={t} topic={t} active={filter.topics.includes(t)} onClick={() => toggleTopic(t)} />
+      {allTopics.length > 0 && <span className="toolbar__label" style={{ marginLeft: 4 }}>{t.topicLabel}</span>}
+      {allTopics.map((tp) => (
+        <TagChip key={tp} topic={tp} active={filter.topics.includes(tp)} onClick={() => toggleTopic(tp)} />
       ))}
+
       <select
         className="sort-select toolbar__spacer"
         aria-label="정렬"
         value={sortMode}
         onChange={(e) => onSortChange(e.target.value as SortMode)}
       >
-        {SORT_MODES.map((m) => <option key={m} value={m}>{SORT_LABELS[m]}</option>)}
+        {SORT_MODES.map((m) => <option key={m} value={m}>{t.sort[m]}</option>)}
       </select>
-      <button type="button" className="btn btn--primary" onClick={onDice}>
-        🎲 아무거나
-      </button>
-      <button type="button" className="btn" onClick={onSync}>
-        🔄 동기화
-      </button>
+      <button type="button" className="btn btn--primary" onClick={onDice}>{t.dice}</button>
+      <button type="button" className="btn" onClick={onSync}>{t.sync}</button>
       <span className={`sync-status${offline ? ' is-offline' : ''}`}>
-        {offline ? '오프라인' : `최근: ${new Date(lastSyncAt).toLocaleString()}`}
+        {offline ? t.offline : t.lastSync(new Date(lastSyncAt).toLocaleString())}
+      </span>
+      <span className="lang-toggle" aria-label={t.language}>
+        {LANGS.map((l) => (
+          <button key={l} type="button" className={`seg${lang === l ? ' is-on' : ''}`} onClick={() => setLang(l)}>
+            {LANG_LABEL[l]}
+          </button>
+        ))}
       </span>
     </div>
   );

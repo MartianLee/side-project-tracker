@@ -1,16 +1,11 @@
 import { FunType } from '../domain/types';
-
-const EMOJI: Record<FunType, string> = {
-  '신규창작': '🆕',
-  '업그레이드': '⬆️',
-  '실험': '🧪',
-  '마무리': '🏁',
-};
+import { useLang } from '../i18n';
 
 export function FunTypeChip({ funType }: { funType: FunType }) {
+  const { t } = useLang();
   return (
     <span className={`fun fun--${funType}`}>
-      {EMOJI[funType]} {funType}
+      {t.funLabel[funType]}
     </span>
   );
 }

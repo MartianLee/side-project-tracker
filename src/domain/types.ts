@@ -77,7 +77,10 @@ export const DEFAULT_MANUAL: ManualEntry = {
 
 export const GITHUB_CUTOFF = '2025-06-01';
 
+export type Lang = 'en' | 'ko';
+
 export interface Settings {
   workspaceDir: string;   // 절대 경로
   githubCutoff: string;   // 'YYYY-MM-DD'
+  lang: Lang;             // UI 언어
 }

@@ -1,13 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Settings } from '../domain/types';
 import { GhStatus, checkGhAuth } from '../data/ghStatus';
-
-const GH_MESSAGE: Record<GhStatus['state'], string> = {
-  checking: 'gh 인증 확인 중…',
-  ok: 'gh 인증됨',
-  unauthed: 'gh에 로그인이 필요합니다',
-  missing: 'gh CLI가 설치되어 있지 않습니다',
-};
+import { useLang, LANGS, LANG_LABEL } from '../i18n';
 
 export function Onboarding({
   defaultWorkspaceDir, defaultCutoff, onComplete, checkAuth = checkGhAuth,
@@ -17,6 +11,7 @@ export function Onboarding({
   onComplete: (s: Settings) => void;
   checkAuth?: () => Promise<GhStatus>;
 }) {
+  const { t, lang, setLang } = useLang();
   const [workspaceDir, setWorkspaceDir] = useState(defaultWorkspaceDir);
   const [githubCutoff, setGithubCutoff] = useState(defaultCutoff);
   const [gh, setGh] = useState<GhStatus>({ state: 'checking', detail: '' });
@@ -29,51 +24,54 @@ export function Onboarding({
   useEffect(() => { runCheck(); }, [runCheck]);
 
   const ready = gh.state === 'ok' && !!workspaceDir.trim();
+  const ghMsg = gh.state === 'ok' ? t.ghOk : gh.state === 'checking' ? t.ghChecking : gh.state === 'unauthed' ? t.ghUnauthed : t.ghMissing;
 
   return (
     <div className="onboarding">
       <div className="onboarding__card">
-        <h1 className="onboarding__title">사이드 프로젝트 트래커</h1>
-        <p className="onboarding__sub">시작하기 전에 아래를 확인하세요. 설정은 나중에 바꿀 수 있어요.</p>
+        <div className="onboarding__top">
+          <h1 className="onboarding__title">{t.appName}</h1>
+          <span className="lang-toggle" aria-label={t.language}>
+            {LANGS.map((l) => (
+              <button key={l} type="button" className={`seg${lang === l ? ' is-on' : ''}`} onClick={() => setLang(l)}>
+                {LANG_LABEL[l]}
+              </button>
+            ))}
+          </span>
+        </div>
+        <p className="onboarding__sub">{t.onboardingSub}</p>
 
         <label className="onboarding__field">
-          워크스페이스 폴더
-          <input aria-label="워크스페이스 폴더" type="text" value={workspaceDir}
-            placeholder="/Users/you/workspace"
+          {t.workspaceLabel}
+          <input aria-label={t.workspaceLabel} type="text" value={workspaceDir}
+            placeholder={t.workspacePlaceholder}
             onChange={(e) => setWorkspaceDir(e.target.value)} />
-          <span className="onboarding__hint">로컬에 클론된 레포들이 모여 있는 폴더입니다.</span>
+          <span className="onboarding__hint">{t.workspaceHint}</span>
         </label>
 
         <label className="onboarding__field">
-          GitHub 컷오프 날짜
-          <input aria-label="GitHub 컷오프 날짜" type="date" value={githubCutoff}
+          {t.cutoffLabel}
+          <input aria-label={t.cutoffLabel} type="date" value={githubCutoff}
             onChange={(e) => setGithubCutoff(e.target.value)} />
-          <span className="onboarding__hint">이 날짜 이후 푸시된 레포만 추적합니다.</span>
+          <span className="onboarding__hint">{t.cutoffHint}</span>
         </label>
 
         <div className={`gh-check gh-check--${gh.state}`}>
           <div className="gh-check__row">
             <span className="gh-check__icon">{gh.state === 'ok' ? '✅' : gh.state === 'checking' ? '⏳' : '⚠️'}</span>
-            <span className="gh-check__msg">
-              {GH_MESSAGE[gh.state]}{gh.state === 'ok' && gh.detail ? ` · ${gh.detail}` : ''}
-            </span>
+            <span className="gh-check__msg">{ghMsg}{gh.state === 'ok' && gh.detail ? ` · ${gh.detail}` : ''}</span>
             {gh.state !== 'ok' && gh.state !== 'checking' && (
-              <button type="button" className="btn gh-check__recheck" onClick={runCheck}>다시 확인</button>
+              <button type="button" className="btn gh-check__recheck" onClick={runCheck}>{t.recheck}</button>
             )}
           </div>
-          {gh.state === 'unauthed' && (
-            <p className="gh-check__hint">필수: 터미널에서 <code>gh auth login</code> 으로 로그인한 뒤 “다시 확인”을 눌러주세요. 토큰은 저장하지 않습니다.</p>
-          )}
-          {gh.state === 'missing' && (
-            <p className="gh-check__hint">필수: GitHub CLI를 설치하세요 — <code>brew install gh</code> 또는 <code>cli.github.com</code>. 설치 후 “다시 확인”.</p>
-          )}
+          {gh.state === 'unauthed' && <p className="gh-check__hint">{t.ghUnauthedHint}</p>}
+          {gh.state === 'missing' && <p className="gh-check__hint">{t.ghMissingHint}</p>}
         </div>
 
         <button className="btn btn--primary onboarding__start" type="button"
           disabled={!ready}
-          title={!ready && gh.state !== 'ok' ? 'GitHub CLI 준비가 필요합니다' : undefined}
-          onClick={() => onComplete({ workspaceDir: workspaceDir.trim(), githubCutoff })}>
-          시작하기
+          onClick={() => onComplete({ workspaceDir: workspaceDir.trim(), githubCutoff, lang })}>
+          {t.start}
         </button>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Project, ManualEntry, Settings, GITHUB_CUTOFF } from './domain/types';
+import { Project, ManualEntry, Settings, Lang, GITHUB_CUTOFF } from './domain/types';
+import { detectLang, LangProvider, DICTS } from './i18n';
 import { Dashboard } from './ui/Dashboard';
 import { Onboarding } from './ui/Onboarding';
 import { appStore } from './data/store';
@@ -18,12 +19,15 @@ export default function App() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [defaultWsDir, setDefaultWsDir] = useState('');
+  const [lang, setLang] = useState<Lang>(detectLang());
   const [projects, setProjects] = useState<Project[]>([]);
   const [lastSyncAt, setLastSyncAt] = useState<string>(new Date().toISOString());
   const [offline, setOffline] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // 최초 진입: 저장된 설정 로드, 없으면 온보딩
+  const t = DICTS[lang];
+
+  // 최초 진입: 저장된 설정 로드, 없으면 온보딩(언어는 시스템 기본값)
   useEffect(() => {
     (async () => {
       try {
@@ -31,6 +35,7 @@ export default function App() {
         const s = await loadSettings(store);
         if (s) {
           setSettings(s);
+          setLang(s.lang ?? detectLang());
         } else {
           const envWs = (import.meta.env.VITE_DEFAULT_WORKSPACE_DIR as string) || (await defaultWorkspaceDir());
           setDefaultWsDir(envWs);
@@ -80,15 +85,25 @@ export default function App() {
     await saveSettings(store, s);
     setNeedsOnboarding(false);
     setSettings(s);
+    setLang(s.lang);
   }, []);
 
-  if (error) return <div className="error-banner">오류: {error}</div>;
-  if (needsOnboarding) {
-    return <Onboarding defaultWorkspaceDir={defaultWsDir} defaultCutoff={ENV_CUTOFF} onComplete={onCompleteOnboarding} />;
-  }
-  if (!settings) return <div className="error-banner" style={{ color: 'var(--text-tertiary)' }}>불러오는 중…</div>;
+  // 언어 변경: 즉시 반영 + 설정이 있으면 영속화
+  const handleSetLang = useCallback(async (l: Lang) => {
+    setLang(l);
+    if (settings) {
+      const next = { ...settings, lang: l };
+      setSettings(next);
+      const store = await appStore();
+      await saveSettings(store, next);
+    }
+  }, [settings]);
 
-  return (
+  let content;
+  if (error) content = <div className="error-banner">{t.error(error)}</div>;
+  else if (needsOnboarding) content = <Onboarding defaultWorkspaceDir={defaultWsDir} defaultCutoff={ENV_CUTOFF} onComplete={onCompleteOnboarding} />;
+  else if (!settings) content = <div className="error-banner" style={{ color: 'var(--text-tertiary)' }}>{t.loading}</div>;
+  else content = (
     <Dashboard
       projects={projects}
       lastSyncAt={lastSyncAt}
@@ -96,5 +111,11 @@ export default function App() {
       onSync={() => load(true, settings)}
       onSaveManual={onSaveManual}
     />
+  );
+
+  return (
+    <LangProvider lang={lang} setLang={handleSetLang}>
+      {content}
+    </LangProvider>
   );
 }

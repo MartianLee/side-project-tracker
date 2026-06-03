@@ -1,10 +1,12 @@
 import { Project } from '../domain/types';
+import { useLang } from '../i18n';
 import { StageBadge } from './StageBadge';
 import { LaunchBadge } from './LaunchBadge';
 import { FunTypeChip } from './FunTypeChip';
 import { TagChip } from './TagChip';
 
 export function ProjectCard({ project, dimmed, onClick }: { project: Project; dimmed: boolean; onClick: () => void }) {
+  const { t } = useLang();
   return (
     <div className="card" onClick={onClick} style={{ opacity: dimmed ? 0.28 : 1 }}>
       <div className="card__head">
@@ -16,11 +18,11 @@ export function ProjectCard({ project, dimmed, onClick }: { project: Project; di
       </div>
       <div className="card__chips">
         {project.funType.map((ft) => <FunTypeChip key={ft} funType={ft} />)}
-        {project.topics.map((t) => <TagChip key={t} topic={t} />)}
+        {project.topics.map((tp) => <TagChip key={tp} topic={tp} />)}
       </div>
       <div className="card__meta">
         <span className={`dot dot--${project.activity}`} />
-        {project.daysSinceActivity}일 전{project.branch ? <span className="card__branch"> · {project.branch}</span> : ''}
+        {t.daysAgo(project.daysSinceActivity)}{project.branch ? <span className="card__branch"> · {project.branch}</span> : ''}
       </div>
       {project.memo && <div className="card__memo">{project.memo}</div>}
       {project.nextAction && <div className="card__next">→ {project.nextAction}</div>}

@@ -17,9 +17,10 @@ describe('settingsStore', () => {
   });
   it('saves and reloads settings', async () => {
     const store = fakeStore();
-    await saveSettings(store, { workspaceDir: '/Users/you/workspace', githubCutoff: '2025-06-01' });
+    await saveSettings(store, { workspaceDir: '/Users/you/workspace', githubCutoff: '2025-06-01', lang: 'en' });
     const s = await loadSettings(store);
     expect(s?.workspaceDir).toBe('/Users/you/workspace');
     expect(s?.githubCutoff).toBe('2025-06-01');
+    expect(s?.lang).toBe('en');
   });
 });
