@@ -11,8 +11,7 @@
     {
       "identifier": "fs:allow-read-dir",
       "allow": [
-        { "path": "$HOME/workspace" },
-        { "path": "$HOME/workspace/**" }
+        { "path": "$HOME/**" }
       ]
     },
     {
