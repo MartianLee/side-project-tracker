@@ -39,7 +39,7 @@ export function Dashboard({
   }
 
   return (
-    <div style={{ padding: 16 }}>
+    <div className="app">
       <MoodBar
         filter={filter}
         allTopics={allTopics}
@@ -49,9 +49,14 @@ export function Dashboard({
         onSync={() => { void onSync(); }}
         onDice={handleDice}
       />
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 9 }}>
+      <div className="grid">
         {shown.map((p) => (
-          <div key={p.name} data-card style={{ opacity: !matchesFilter(p, filter) ? 0.28 : 1, outline: highlighted === p.name ? '2px solid #238636' : 'none', borderRadius: 8 }}>
+          <div
+            key={p.name}
+            data-card
+            className={`card-wrap${highlighted === p.name ? ' is-picked' : ''}`}
+            style={{ opacity: !matchesFilter(p, filter) ? 0.28 : 1 }}
+          >
             <ProjectCard project={p} dimmed={false} onClick={() => setEditing(p.name)} />
             {editing === p.name && (
               <CardEditor

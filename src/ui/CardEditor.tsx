@@ -23,53 +23,57 @@ export function CardEditor({
   }
 
   return (
-    <div style={{ background: '#0d1117', border: '1px solid #30363d', borderRadius: 8, padding: 14, display: 'grid', gap: 8 }}>
+    <div className="editor">
       <label>단계
         <select aria-label="단계" value={draft.stage} onChange={(e) => setDraft({ ...draft, stage: e.target.value as ManualEntry['stage'] })}>
           {STAGES.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
       </label>
 
-      <div>
+      <div className="editor__funs">
         {FUN_TYPES.map((ft) => (
-          <button key={ft} type="button" onClick={() => toggleFun(ft)}
-            style={{ marginRight: 4, fontWeight: draft.funType.includes(ft) ? 700 : 400 }}>
+          <button
+            key={ft}
+            type="button"
+            className={`seg${draft.funType.includes(ft) ? ' is-on' : ''}`}
+            onClick={() => toggleFun(ft)}
+          >
             {FUN_LABEL[ft]}
           </button>
         ))}
       </div>
 
       <label>주제(쉼표 구분)
-        <input aria-label="주제" value={draft.topics.join(', ')}
+        <input aria-label="주제" type="text" value={draft.topics.join(', ')}
           onChange={(e) => setDraft({ ...draft, topics: e.target.value.split(',').map((t) => t.trim()).filter(Boolean) })} />
       </label>
 
       <label>메모
-        <input aria-label="메모" value={draft.memo} onChange={(e) => setDraft({ ...draft, memo: e.target.value })} />
+        <input aria-label="메모" type="text" value={draft.memo} onChange={(e) => setDraft({ ...draft, memo: e.target.value })} />
       </label>
 
       <label>다음 액션
-        <input aria-label="다음 액션" value={draft.nextAction} onChange={(e) => setDraft({ ...draft, nextAction: e.target.value })} />
+        <input aria-label="다음 액션" type="text" value={draft.nextAction} onChange={(e) => setDraft({ ...draft, nextAction: e.target.value })} />
       </label>
 
-      <label>
+      <label className="row">
         <input type="checkbox" checked={!!draft.launched}
           onChange={(e) => setDraft({ ...draft, launched: e.target.checked ? { date: new Date().toISOString().slice(0, 10) } : null })} />
         출시됨
       </label>
       {draft.launched && (
         <label>출시 URL
-          <input aria-label="출시 URL" value={draft.launched.url ?? ''}
+          <input aria-label="출시 URL" type="text" value={draft.launched.url ?? ''}
             onChange={(e) => setDraft({ ...draft, launched: { ...draft.launched, url: e.target.value } })} />
         </label>
       )}
 
-      <label><input type="checkbox" checked={draft.pinned} onChange={(e) => setDraft({ ...draft, pinned: e.target.checked })} /> 핀</label>
-      <label><input type="checkbox" checked={draft.hidden} onChange={(e) => setDraft({ ...draft, hidden: e.target.checked })} /> 숨김</label>
+      <label className="row"><input type="checkbox" checked={draft.pinned} onChange={(e) => setDraft({ ...draft, pinned: e.target.checked })} /> 핀</label>
+      <label className="row"><input type="checkbox" checked={draft.hidden} onChange={(e) => setDraft({ ...draft, hidden: e.target.checked })} /> 숨김</label>
 
-      <div style={{ display: 'flex', gap: 8 }}>
-        <button type="button" onClick={() => onSave(name, draft)}>저장</button>
-        <button type="button" onClick={onClose}>닫기</button>
+      <div className="editor__actions">
+        <button type="button" className="btn btn--primary" onClick={() => onSave(name, draft)}>저장</button>
+        <button type="button" className="btn" onClick={onClose}>닫기</button>
       </div>
     </div>
   );

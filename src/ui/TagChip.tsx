@@ -1,15 +1,7 @@
 export function TagChip({ topic, onClick, active }: { topic: string; onClick?: () => void; active?: boolean }) {
+  const cls = ['tag', onClick ? 'is-clickable' : '', active ? 'is-on' : ''].filter(Boolean).join(' ');
   return (
-    <span
-      onClick={onClick}
-      style={{
-        color: active ? '#fff' : '#8b949e',
-        background: active ? '#1f6feb' : 'transparent',
-        border: '1px solid #30363d',
-        borderRadius: 5, padding: '2px 8px', fontSize: 11, marginRight: 4,
-        cursor: onClick ? 'pointer' : 'default',
-      }}
-    >
+    <span className={cls} onClick={onClick}>
       #{topic}
     </span>
   );

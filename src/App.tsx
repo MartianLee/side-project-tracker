@@ -50,7 +50,7 @@ export default function App() {
     await load(false);
   }, [load]);
 
-  if (error) return <div style={{ padding: 16, color: '#e5534b' }}>오류: {error}</div>;
+  if (error) return <div className="error-banner">오류: {error}</div>;
 
   return (
     <Dashboard
