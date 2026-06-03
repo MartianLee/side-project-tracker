@@ -1,7 +1,89 @@
-# Tauri + React + Typescript
+# 사이드 프로젝트 트래커
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+`~/workspace`의 사이드 프로젝트(GitHub 레포)를 한 창에서 추적하는 macOS 데스크톱 앱입니다. 출시 단계·방치 감지·흥미 태그·기분 매칭을 지원합니다.
 
-## Recommended IDE Setup
+> 📷 스크린샷은 추후 추가
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+---
+
+## ✨ 기능
+
+- **카드 그리드** — 단계 배지(아이디어/개발중/다듬기/유지·운영/보류), 활동성 표시(active·warning·stale), 메모, 다음 액션
+- **흥미 태그** — 재미유형(신규창작·업그레이드·실험·마무리) + 주제 태그
+- **🎲 기분 매칭 필터** — 현재 기분에 맞는 프로젝트를 골라주는 필터
+- **정렬** — 최신 활동순·출시순·방치순
+- **인라인 편집** — 카드에서 바로 단계·메모·다음 액션 수정
+- **데이터 소스 이중화** — GitHub(`gh` CLI)로 레포 목록을 가져오고, 로컬 git에서 마지막 커밋·브랜치를 보강
+
+---
+
+## 🧰 사전 요구사항
+
+| 항목 | 버전 |
+|------|------|
+| macOS | — |
+| Node.js | ≥ 18 |
+| Rust (rustup) | Tauri 빌드용 |
+| `gh` CLI | `gh auth login` 완료 필요 |
+
+> **토큰 저장 없음** — GitHub 데이터는 이미 인증된 `gh` CLI를 통해 가져옵니다. 별도의 토큰을 앱이 저장하지 않습니다.
+
+---
+
+## 🚀 시작하기
+
+```bash
+git clone <repo-url>
+cd side-project-tracker
+npm install
+npm run tauri dev      # 개발 실행
+npm run tauri build    # .app 빌드
+```
+
+첫 실행 시 온보딩 화면이 표시됩니다. 워크스페이스 폴더와 GitHub 컷오프 날짜를 입력하면 바로 사용할 수 있습니다.
+
+---
+
+## ⚙️ 설정
+
+첫 실행 온보딩에서 두 가지를 설정합니다:
+
+1. **워크스페이스 폴더** — 로컬에 클론된 레포들이 모여 있는 디렉터리 (예: `/Users/you/workspace`)
+2. **GitHub 컷오프 날짜** — 이 날짜 이후 푸시된 레포만 추적합니다
+
+설정은 앱 데이터 디렉터리의 `data.json`에 저장됩니다. 나중에 바꾸려면 앱을 재시작하면 됩니다(현재 설정 초기화 기능 미구현 — 직접 파일 삭제).
+
+`.env`(`.env.example` 참고)로 온보딩 기본값을 미리 줄 수 있습니다(비밀 값 아님):
+
+```
+VITE_DEFAULT_WORKSPACE_DIR=/Users/you/workspace
+VITE_DEFAULT_GITHUB_CUTOFF=2025-06-01
+```
+
+> **주의:** 워크스페이스 폴더는 홈 디렉터리(`$HOME`) 하위여야 합니다 (파일 접근 스코프 제한).
+
+---
+
+## 🗂️ 데이터 소스
+
+| 소스 | 방식 |
+|------|------|
+| GitHub 레포 목록 | 인증된 `gh` CLI — 토큰 미저장 |
+| 로컬 git 정보 | 클론된 레포에서 직접 읽기 (마지막 커밋·브랜치) |
+| 수동 레이어 | 로컬 JSON (단계·태그·메모·다음 액션) |
+
+---
+
+## 🧪 개발
+
+```bash
+npm test          # vitest 단위/컴포넌트 테스트
+npm run build     # 프론트엔드 빌드 (타입 검사 포함)
+npx tsc --noEmit  # 타입 검사만
+```
+
+---
+
+## 📄 라이선스
+
+MIT (see [LICENSE](./LICENSE))
