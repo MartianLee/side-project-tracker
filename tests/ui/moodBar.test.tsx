@@ -5,8 +5,10 @@ import { MoodBar } from '../../src/ui/MoodBar';
 const baseProps = {
   filter: { funTypes: [], topics: [], showHidden: false },
   allTopics: ['게임', '시각화'],
+  sortMode: 'recent' as const,
   lastSyncAt: '2026-06-01T00:00:00Z',
   offline: false,
+  onSortChange: () => {},
 };
 
 describe('MoodBar', () => {
@@ -27,5 +29,11 @@ describe('MoodBar', () => {
     render(<MoodBar {...baseProps} onChange={() => {}} onSync={onSync} onDice={() => {}} />);
     fireEvent.click(screen.getByText(/동기화/));
     expect(onSync).toHaveBeenCalledOnce();
+  });
+  it('changes sort mode', () => {
+    const onSortChange = vi.fn();
+    render(<MoodBar {...baseProps} onSortChange={onSortChange} onChange={() => {}} onSync={() => {}} onDice={() => {}} />);
+    fireEvent.change(screen.getByLabelText('정렬'), { target: { value: 'launched' } });
+    expect(onSortChange).toHaveBeenCalledWith('launched');
   });
 });

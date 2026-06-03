@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Project, ManualEntry } from '../domain/types';
-import { MoodFilter, matchesFilter, visibleProjects, sortProjects, pickRandom } from '../domain/filter';
+import { MoodFilter, SortMode, matchesFilter, visibleProjects, sortProjects, pickRandom } from '../domain/filter';
 import { MoodBar } from './MoodBar';
 import { ProjectCard } from './ProjectCard';
 import { CardEditor } from './CardEditor';
@@ -15,6 +15,7 @@ export function Dashboard({
   onSaveManual: (name: string, entry: ManualEntry) => Promise<void>;
 }) {
   const [filter, setFilter] = useState<MoodFilter>({ funTypes: [], topics: [], showHidden: false });
+  const [sortMode, setSortMode] = useState<SortMode>('recent');
   const [editing, setEditing] = useState<string | null>(null);
   const [highlighted, setHighlighted] = useState<string | null>(null);
 
@@ -23,7 +24,10 @@ export function Dashboard({
     [projects],
   );
 
-  const shown = useMemo(() => sortProjects(visibleProjects(projects, filter)), [projects, filter]);
+  const shown = useMemo(
+    () => sortProjects(visibleProjects(projects, filter), sortMode),
+    [projects, filter, sortMode],
+  );
 
   function handleDice() {
     const candidates = shown.filter((p) => matchesFilter(p, filter));
@@ -43,9 +47,11 @@ export function Dashboard({
       <MoodBar
         filter={filter}
         allTopics={allTopics}
+        sortMode={sortMode}
         lastSyncAt={lastSyncAt}
         offline={offline}
         onChange={setFilter}
+        onSortChange={setSortMode}
         onSync={() => { void onSync(); }}
         onDice={handleDice}
       />

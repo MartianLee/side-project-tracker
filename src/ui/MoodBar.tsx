@@ -1,19 +1,23 @@
-import { MoodFilter } from '../domain/filter';
+import { MoodFilter, SortMode, SORT_LABELS } from '../domain/filter';
 import { FUN_TYPES, FunType } from '../domain/types';
 import { TagChip } from './TagChip';
+
+const SORT_MODES: SortMode[] = ['recent', 'launched', 'neglect'];
 
 const FUN_LABEL: Record<FunType, string> = {
   '신규창작': '🆕 신규창작', '업그레이드': '⬆️ 업그레이드', '실험': '🧪 실험', '마무리': '🏁 마무리',
 };
 
 export function MoodBar({
-  filter, allTopics, lastSyncAt, offline, onChange, onSync, onDice,
+  filter, allTopics, sortMode, lastSyncAt, offline, onChange, onSortChange, onSync, onDice,
 }: {
   filter: MoodFilter;
   allTopics: string[];
+  sortMode: SortMode;
   lastSyncAt: string;
   offline: boolean;
   onChange: (f: MoodFilter) => void;
+  onSortChange: (m: SortMode) => void;
   onSync: () => void;
   onDice: () => void;
 }) {
@@ -47,7 +51,15 @@ export function MoodBar({
       {allTopics.map((t) => (
         <TagChip key={t} topic={t} active={filter.topics.includes(t)} onClick={() => toggleTopic(t)} />
       ))}
-      <button type="button" className="btn btn--primary toolbar__spacer" onClick={onDice}>
+      <select
+        className="sort-select toolbar__spacer"
+        aria-label="정렬"
+        value={sortMode}
+        onChange={(e) => onSortChange(e.target.value as SortMode)}
+      >
+        {SORT_MODES.map((m) => <option key={m} value={m}>{SORT_LABELS[m]}</option>)}
+      </select>
+      <button type="button" className="btn btn--primary" onClick={onDice}>
         🎲 아무거나
       </button>
       <button type="button" className="btn" onClick={onSync}>

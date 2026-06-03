@@ -114,6 +114,19 @@ button, input, select { font-family: inherit; }
 .btn--primary { background: var(--accent); border-color: var(--accent); color: #fff; }
 .btn--primary:hover { background: var(--accent-hover); }
 
+.sort-select {
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.sort-select:hover { background: var(--surface-hover); }
+.sort-select:focus { outline: none; border-color: var(--accent); }
+
 .sync-status { font-size: 10.5px; color: var(--text-tertiary); }
 .sync-status.is-offline { color: var(--dot-stale); font-weight: 600; }
 

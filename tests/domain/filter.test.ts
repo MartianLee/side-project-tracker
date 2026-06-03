@@ -40,12 +40,33 @@ describe('visibleProjects', () => {
 });
 
 describe('sortProjects', () => {
-  it('pinned first, then neglected active-stage, then recent', () => {
+  const old = proj({ name: 'old', lastCommitAt: '2026-01-01T00:00:00Z' });
+  const mid = proj({ name: 'mid', lastCommitAt: '2026-04-01T00:00:00Z', launched: { url: 'u' } });
+  const fresh = proj({ name: 'fresh', lastCommitAt: '2026-05-30T00:00:00Z' });
+
+  it("default 'recent': newest activity first", () => {
+    const out = sortProjects([old, fresh, mid]).map(p => p.name);
+    expect(out).toEqual(['fresh', 'mid', 'old']);
+  });
+
+  it("'launched': launched projects first, then recent", () => {
+    const out = sortProjects([old, fresh, mid], 'launched').map(p => p.name);
+    expect(out[0]).toBe('mid'); // only launched one
+    expect(out.slice(1)).toEqual(['fresh', 'old']);
+  });
+
+  it('pinned always floats to top regardless of mode', () => {
+    const pinned = proj({ name: 'pin', pinned: true, lastCommitAt: '2025-01-01T00:00:00Z' });
+    expect(sortProjects([fresh, pinned]).map(p => p.name)[0]).toBe('pin');
+    expect(sortProjects([fresh, pinned], 'launched').map(p => p.name)[0]).toBe('pin');
+  });
+
+  it("'neglect': neglected active-stage first", () => {
     const pinned = proj({ name: 'pin', pinned: true, activity: 'active' });
     const neglected = proj({ name: 'neg', stage: '개발중', activity: 'stale', lastCommitAt: '2026-01-01T00:00:00Z' });
     const maintained = proj({ name: 'maint', stage: '유지·운영', activity: 'stale', lastCommitAt: '2026-05-01T00:00:00Z' });
-    const fresh = proj({ name: 'fresh', activity: 'active', lastCommitAt: '2026-05-30T00:00:00Z' });
-    const out = sortProjects([fresh, maintained, neglected, pinned]).map(p => p.name);
+    const fresh2 = proj({ name: 'fresh', activity: 'active', lastCommitAt: '2026-05-30T00:00:00Z' });
+    const out = sortProjects([fresh2, maintained, neglected, pinned], 'neglect').map(p => p.name);
     expect(out[0]).toBe('pin');
     expect(out[1]).toBe('neg');
   });
