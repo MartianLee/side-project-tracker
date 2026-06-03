@@ -28,7 +28,7 @@ export function parseGithubRepos(raw: string, cutoff: string = GITHUB_CUTOFF): G
     }));
 }
 
-export async function fetchGithubRepos(): Promise<GithubRepo[]> {
+export async function fetchGithubRepos(cutoff: string = GITHUB_CUTOFF): Promise<GithubRepo[]> {
   const cmd = Command.create('gh', [
     'api',
     'user/repos?per_page=100&affiliation=owner&sort=pushed',
@@ -36,5 +36,5 @@ export async function fetchGithubRepos(): Promise<GithubRepo[]> {
   ]);
   const out = await cmd.execute();
   if (out.code !== 0) throw new Error(`gh api failed: ${out.stderr}`);
-  return parseGithubRepos(normalizePaginatedJson(out.stdout));
+  return parseGithubRepos(normalizePaginatedJson(out.stdout), cutoff);
 }
