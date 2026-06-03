@@ -236,3 +236,18 @@ button, input, select { font-family: inherit; }
 .onboarding__note { margin: 2px 0 0; font-size: 11.5px; color: var(--text-tertiary); line-height: 1.5; }
 .onboarding__note code { background: var(--surface-sunken); border: 1px solid var(--border); border-radius: 4px; padding: 0 4px; font-size: 11px; }
 .onboarding__start { justify-self: stretch; padding: 9px; font-size: 13px; margin-top: 4px; }
+
+/* gh 준비 상태 체크 */
+.gh-check { border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface-sunken); padding: 9px 11px; display: grid; gap: 5px; }
+.gh-check--ok { border-color: var(--stage-dev-bg); background: var(--stage-dev-bg); }
+.gh-check--unauthed, .gh-check--missing { border-color: #f3dca6; background: #fdf6e3; }
+.gh-check__row { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; color: var(--text); }
+.gh-check__icon { flex-shrink: 0; }
+.gh-check__msg { flex: 1; }
+.gh-check__recheck { padding: 3px 9px; font-size: 11px; font-weight: 600; }
+.gh-check__hint { margin: 0; font-size: 11px; font-weight: 400; color: var(--text-secondary); line-height: 1.5; }
+.gh-check__hint code { background: var(--surface); border: 1px solid var(--border-strong); border-radius: 4px; padding: 0 4px; font-size: 10.5px; }
+
+/* 비활성 버튼 */
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn:disabled:hover { background: var(--accent); }
