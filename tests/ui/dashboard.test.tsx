@@ -25,7 +25,7 @@ describe('Dashboard', () => {
 
   it('dims non-matching cards when a funType filter is active', () => {
     render(<Dashboard projects={projects} lastSyncAt="2026-06-01T00:00:00Z" offline={false} onSync={async () => {}} onSaveManual={async () => {}} />);
-    fireEvent.click(screen.getByText(/신규창작/));
+    fireEvent.click(screen.getByRole('button', { name: /신규창작/ }));
     const upgradeCard = screen.getByText('upgrade-app').closest('div[data-card]') as HTMLElement;
     expect(upgradeCard.style.opacity).toBe('0.28');
   });
