@@ -4,7 +4,13 @@
 
 A macOS desktop app that tracks the side projects (GitHub repos) in your `~/workspace` from a single window — launch stage, staleness detection, interest tags, and mood matching.
 
-> 📷 Screenshots coming soon
+### Dashboard
+
+![Dashboard](docs/screenshots/dashboard-en.png)
+
+### First-run onboarding
+
+![Onboarding](docs/screenshots/onboarding-en.png)
 
 ---
 

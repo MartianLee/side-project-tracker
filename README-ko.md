@@ -4,7 +4,13 @@
 
 `~/workspace`의 사이드 프로젝트(GitHub 레포)를 한 창에서 추적하는 macOS 데스크톱 앱입니다. 출시 단계·방치 감지·흥미 태그·기분 매칭을 지원합니다.
 
-> 📷 스크린샷은 추후 추가
+### 대시보드
+
+![대시보드](docs/screenshots/dashboard-ko.png)
+
+### 첫 실행 온보딩
+
+![온보딩](docs/screenshots/onboarding-ko.png)
 
 ---
 

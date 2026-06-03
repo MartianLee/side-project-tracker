@@ -62,7 +62,7 @@ export function MoodBar({
       <button type="button" className="btn btn--primary" onClick={onDice}>{t.dice}</button>
       <button type="button" className="btn" onClick={onSync}>{t.sync}</button>
       <span className={`sync-status${offline ? ' is-offline' : ''}`}>
-        {offline ? t.offline : t.lastSync(new Date(lastSyncAt).toLocaleString())}
+        {offline ? t.offline : t.lastSync(new Date(lastSyncAt).toLocaleString(lang === 'ko' ? 'ko-KR' : 'en-US'))}
       </span>
       <span className="lang-toggle" aria-label={t.language}>
         {LANGS.map((l) => (
