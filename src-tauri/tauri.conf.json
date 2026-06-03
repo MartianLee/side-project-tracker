@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "side-project-tracker",
+  "productName": "사이드 프로젝트 트래커",
   "version": "0.1.0",
   "identifier": "com.sidetracker.app",
   "build": {
