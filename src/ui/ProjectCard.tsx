@@ -1,7 +1,6 @@
 import { Project } from '../domain/types';
 import { StageBadge } from './StageBadge';
 import { LaunchBadge } from './LaunchBadge';
-import { FunTypeChip } from './FunTypeChip';
 import { TagChip } from './TagChip';
 
 const DOT: Record<Project['activity'], string> = { active: '#3fb950', warning: '#d6a526', stale: '#e5534b' };
@@ -23,7 +22,6 @@ export function ProjectCard({ project, dimmed, onClick }: { project: Project; di
         </span>
       </div>
       <div style={{ margin: '6px 0' }}>
-        {project.funType.map((ft) => <FunTypeChip key={ft} funType={ft} />)}
         {project.topics.map((t) => <TagChip key={t} topic={t} />)}
       </div>
       <div style={{ fontSize: 11, color: '#8b949e' }}>
