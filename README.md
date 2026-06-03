@@ -1,89 +1,91 @@
-# 사이드 프로젝트 트래커
+**English** | [한국어](./README-ko.md)
 
-`~/workspace`의 사이드 프로젝트(GitHub 레포)를 한 창에서 추적하는 macOS 데스크톱 앱입니다. 출시 단계·방치 감지·흥미 태그·기분 매칭을 지원합니다.
+# Side Project Tracker
 
-> 📷 스크린샷은 추후 추가
+A macOS desktop app that tracks the side projects (GitHub repos) in your `~/workspace` from a single window — launch stage, staleness detection, interest tags, and mood matching.
 
----
-
-## ✨ 기능
-
-- **카드 그리드** — 단계 배지(아이디어/개발중/다듬기/유지·운영/보류), 활동성 표시(active·warning·stale), 메모, 다음 액션
-- **흥미 태그** — 재미유형(신규창작·업그레이드·실험·마무리) + 주제 태그
-- **🎲 기분 매칭 필터** — 현재 기분에 맞는 프로젝트를 골라주는 필터
-- **정렬** — 최신 활동순·출시순·방치순
-- **인라인 편집** — 카드에서 바로 단계·메모·다음 액션 수정
-- **데이터 소스 이중화** — GitHub(`gh` CLI)로 레포 목록을 가져오고, 로컬 git에서 마지막 커밋·브랜치를 보강
+> 📷 Screenshots coming soon
 
 ---
 
-## 🧰 사전 요구사항
+## ✨ Features
 
-| 항목 | 버전 |
-|------|------|
+- **Card grid** — stage badges (idea / building / polishing / maintenance / on-hold), activity status (active · warning · stale), memo, next action
+- **Interest tags** — fun-type (new creation · upgrade · experiment · wrap-up) + topic tags
+- **🎲 Mood-match filter** — surfaces the projects that fit your current mood
+- **Sorting** — by recent activity, launch status, or neglect
+- **Inline editing** — edit stage, memo, and next action right on the card
+- **Dual data sources** — pulls the repo list from GitHub (`gh` CLI) and enriches it with last commit / branch from local git
+
+---
+
+## 🧰 Prerequisites
+
+| Requirement | Version |
+|-------------|---------|
 | macOS | — |
 | Node.js | ≥ 18 |
-| Rust (rustup) | Tauri 빌드용 |
-| `gh` CLI | `gh auth login` 완료 필요 |
+| Rust (rustup) | for the Tauri build |
+| `gh` CLI | must be signed in via `gh auth login` |
 
-> **토큰 저장 없음** — GitHub 데이터는 이미 인증된 `gh` CLI를 통해 가져옵니다. 별도의 토큰을 앱이 저장하지 않습니다.
+> **No token storage** — GitHub data is fetched through the already-authenticated `gh` CLI; the app stores no token of its own. The first-run onboarding verifies that `gh` is installed and authenticated, and blocks startup with guidance until it is ready.
 
 ---
 
-## 🚀 시작하기
+## 🚀 Getting started
 
 ```bash
 git clone <repo-url>
 cd side-project-tracker
 npm install
-npm run tauri dev      # 개발 실행
-npm run tauri build    # .app 빌드
+npm run tauri dev      # run in development
+npm run tauri build    # build the .app
 ```
 
-첫 실행 시 온보딩 화면이 표시됩니다. 워크스페이스 폴더와 GitHub 컷오프 날짜를 입력하면 바로 사용할 수 있습니다.
+On first launch you'll see an onboarding screen. Enter your workspace folder and GitHub cutoff date, and you're ready to go.
 
 ---
 
-## ⚙️ 설정
+## ⚙️ Configuration
 
-첫 실행 온보딩에서 두 가지를 설정합니다:
+The first-run onboarding asks for two things:
 
-1. **워크스페이스 폴더** — 로컬에 클론된 레포들이 모여 있는 디렉터리 (예: `/Users/you/workspace`)
-2. **GitHub 컷오프 날짜** — 이 날짜 이후 푸시된 레포만 추적합니다
+1. **Workspace folder** — the directory where your cloned repos live (e.g. `/Users/you/workspace`)
+2. **GitHub cutoff date** — only repos pushed after this date are tracked
 
-설정은 앱 데이터 디렉터리의 `data.json`에 저장됩니다. 나중에 바꾸려면 앱을 재시작하면 됩니다(현재 설정 초기화 기능 미구현 — 직접 파일 삭제).
+Settings are stored in `data.json` in the app's data directory. To change them later, restart the app (a settings-reset UI isn't built yet — delete the file manually).
 
-`.env`(`.env.example` 참고)로 온보딩 기본값을 미리 줄 수 있습니다(비밀 값 아님):
+You can pre-fill the onboarding defaults via `.env` (see `.env.example`; these are not secrets):
 
 ```
 VITE_DEFAULT_WORKSPACE_DIR=/Users/you/workspace
 VITE_DEFAULT_GITHUB_CUTOFF=2025-06-01
 ```
 
-> **주의:** 워크스페이스 폴더는 홈 디렉터리(`$HOME`) 하위여야 합니다 (파일 접근 스코프 제한).
+> **Note:** the workspace folder must live under your home directory (`$HOME`) due to file-access scoping.
 
 ---
 
-## 🗂️ 데이터 소스
+## 🗂️ Data sources
 
-| 소스 | 방식 |
-|------|------|
-| GitHub 레포 목록 | 인증된 `gh` CLI — 토큰 미저장 |
-| 로컬 git 정보 | 클론된 레포에서 직접 읽기 (마지막 커밋·브랜치) |
-| 수동 레이어 | 로컬 JSON (단계·태그·메모·다음 액션) |
+| Source | How |
+|--------|-----|
+| GitHub repo list | authenticated `gh` CLI — no token stored |
+| Local git info | read directly from cloned repos (last commit · branch) |
+| Manual layer | local JSON (stage · tags · memo · next action) |
 
 ---
 
-## 🧪 개발
+## 🧪 Development
 
 ```bash
-npm test          # vitest 단위/컴포넌트 테스트
-npm run build     # 프론트엔드 빌드 (타입 검사 포함)
-npx tsc --noEmit  # 타입 검사만
+npm test          # vitest unit/component tests
+npm run build     # frontend build (includes type-check)
+npx tsc --noEmit  # type-check only
 ```
 
 ---
 
-## 📄 라이선스
+## 📄 License
 
 MIT (see [LICENSE](./LICENSE))
