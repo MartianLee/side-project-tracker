@@ -9,6 +9,13 @@
     "store:default",
     "fs:default",
     {
+      "identifier": "fs:allow-read-dir",
+      "allow": [
+        { "path": "$HOME/workspace" },
+        { "path": "$HOME/workspace/**" }
+      ]
+    },
+    {
       "identifier": "shell:allow-execute",
       "allow": [
         { "name": "gh", "cmd": "gh", "args": true, "sidecar": false },
