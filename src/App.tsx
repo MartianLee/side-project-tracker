@@ -1,51 +1,64 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
+import { useCallback, useEffect, useState } from 'react';
+import { Project, ManualEntry } from './domain/types';
+import { Dashboard } from './ui/Dashboard';
+import { appStore } from './data/store';
+import { fetchGithubRepos } from './data/github';
+import { getLocalGitInfo } from './data/localGit';
+import { buildWorkspaceMap, defaultWorkspaceDir } from './data/workspaceMap';
+import { loadManual, saveManualEntry } from './data/manualStore';
+import { loadCache, saveCache } from './data/cache';
+import { resolveRepos } from './data/sync';
+import { assembleProjects } from './data/loadProjects';
 
-function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+export default function App() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [lastSyncAt, setLastSyncAt] = useState<string>(new Date().toISOString());
+  const [offline, setOffline] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
-  }
+  const load = useCallback(async (force: boolean) => {
+    try {
+      const store = await appStore();
+      const now = new Date();
+      const sync = await resolveRepos(
+        {
+          loadCache: () => loadCache(store),
+          saveCache: (repos, n) => saveCache(store, repos, n),
+          fetchRepos: fetchGithubRepos,
+        },
+        now,
+        force,
+      );
+      const wsDir = await defaultWorkspaceDir();
+      const workspaceMap = await buildWorkspaceMap(wsDir);
+      const manual = await loadManual(store);
+      const assembled = await assembleProjects(sync.repos, { workspaceMap, getLocalGitInfo, manual }, now);
+      setProjects(assembled);
+      setLastSyncAt(sync.lastSyncAt);
+      setOffline(sync.offline);
+      setError(null);
+    } catch (e) {
+      setError(String(e));
+    }
+  }, []);
+
+  useEffect(() => { void load(false); }, [load]);
+
+  const onSaveManual = useCallback(async (name: string, entry: ManualEntry) => {
+    const store = await appStore();
+    await saveManualEntry(store, name, entry);
+    await load(false);
+  }, [load]);
+
+  if (error) return <div style={{ padding: 16, color: '#e5534b' }}>오류: {error}</div>;
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+    <Dashboard
+      projects={projects}
+      lastSyncAt={lastSyncAt}
+      offline={offline}
+      onSync={() => load(true)}
+      onSaveManual={onSaveManual}
+    />
   );
 }
-
-export default App;
