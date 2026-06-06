@@ -8,7 +8,7 @@ export function GeneralSettings() {
     <div className="settings-pane">
       <div className="settings-field">
         <span className="settings-field__label">{t.language}</span>
-        <span className="lang-toggle">
+        <span className="lang-toggle" aria-label={t.language}>
           {LANGS.map((l) => (
             <button
               key={l}

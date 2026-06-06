@@ -47,6 +47,13 @@ describe('SettingsModal', () => {
     expect(screen.getByText('General')).toBeInTheDocument();
   });
 
+  it('exposes a labelled, modal dialog role', () => {
+    renderModal();
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toHaveAttribute('aria-modal', 'true');
+    expect(dialog).toHaveAccessibleName('Settings');
+  });
+
   it('calls onClose on Escape', () => {
     const onClose = vi.fn();
     renderModal(onClose);

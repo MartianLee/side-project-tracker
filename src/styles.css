@@ -291,8 +291,4 @@ button, input, select { font-family: inherit; }
 .settings-pane { display: grid; gap: 20px; max-width: 420px; }
 .settings-field { display: grid; gap: 6px; }
 .settings-field__label { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
-.settings-field input {
-  font-size: 14px; padding: 8px 10px; border-radius: var(--radius-sm);
-  border: 1px solid var(--border-strong); background: var(--surface); color: var(--text);
-}
 .onboarding__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
