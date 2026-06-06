@@ -4,6 +4,7 @@ import { MoodFilter, SortMode, matchesFilter, visibleProjects, sortProjects, pic
 import { MoodBar } from './MoodBar';
 import { ProjectCard } from './ProjectCard';
 import { CardEditor } from './CardEditor';
+import { SettingsModal } from './SettingsModal';
 
 export function Dashboard({
   projects, lastSyncAt, offline, onSync, onSaveManual,
@@ -18,6 +19,7 @@ export function Dashboard({
   const [sortMode, setSortMode] = useState<SortMode>('recent');
   const [editing, setEditing] = useState<string | null>(null);
   const [highlighted, setHighlighted] = useState<string | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const allTopics = useMemo(
     () => Array.from(new Set(projects.flatMap((p) => p.topics))).sort(),
@@ -54,6 +56,7 @@ export function Dashboard({
         onSortChange={setSortMode}
         onSync={() => { void onSync(); }}
         onDice={handleDice}
+        onOpenSettings={() => setSettingsOpen(true)}
       />
       <div className="grid">
         {shown.map((p) => (
@@ -75,6 +78,7 @@ export function Dashboard({
           </div>
         ))}
       </div>
+      {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
     </div>
   );
 }

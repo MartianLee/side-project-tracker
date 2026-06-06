@@ -5,6 +5,7 @@ import type { Lang } from '../../src/domain/types';
 import { LangProvider } from '../../src/i18n';
 import { GeneralSettings } from '../../src/ui/GeneralSettings';
 import { SettingsModal } from '../../src/ui/SettingsModal';
+import { Dashboard } from '../../src/ui/Dashboard';
 
 describe('GeneralSettings', () => {
   it('renders the language label and EN/한국어 buttons', () => {
@@ -82,5 +83,35 @@ describe('SettingsModal', () => {
     expect(screen.getByText('일반')).toBeInTheDocument(); // General -> 일반
     fireEvent.click(screen.getByRole('button', { name: 'EN' }));
     expect(screen.getByText('General')).toBeInTheDocument();
+  });
+});
+
+describe('Dashboard settings integration', () => {
+  function renderDashboard() {
+    return render(
+      <LangProvider lang="en" setLang={() => {}}>
+        <Dashboard
+          projects={[]}
+          lastSyncAt="2026-06-01T00:00:00Z"
+          offline={false}
+          onSync={async () => {}}
+          onSaveManual={async () => {}}
+        />
+      </LangProvider>,
+    );
+  }
+
+  it('opens the settings modal when the gear is clicked', () => {
+    renderDashboard();
+    expect(screen.queryByTestId('settings-overlay')).toBeNull();
+    fireEvent.click(screen.getByLabelText('Settings')); // en context: gear aria-label = 'Settings'
+    expect(screen.getByTestId('settings-overlay')).toBeInTheDocument();
+  });
+
+  it('closes the modal on Escape', () => {
+    renderDashboard();
+    fireEvent.click(screen.getByLabelText('Settings'));
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(screen.queryByTestId('settings-overlay')).toBeNull();
   });
 });
