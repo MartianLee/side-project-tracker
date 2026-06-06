@@ -9,6 +9,7 @@ const baseProps = {
   lastSyncAt: '2026-06-01T00:00:00Z',
   offline: false,
   onSortChange: () => {},
+  onOpenSettings: () => {},
 };
 
 describe('MoodBar', () => {
@@ -35,5 +36,12 @@ describe('MoodBar', () => {
     render(<MoodBar {...baseProps} onSortChange={onSortChange} onChange={() => {}} onSync={() => {}} onDice={() => {}} />);
     fireEvent.change(screen.getByLabelText('정렬'), { target: { value: 'launched' } });
     expect(onSortChange).toHaveBeenCalledWith('launched');
+  });
+  it('fires onOpenSettings when the gear button is clicked', () => {
+    const onOpenSettings = vi.fn();
+    render(<MoodBar {...baseProps} onOpenSettings={onOpenSettings} onChange={() => {}} onSync={() => {}} onDice={() => {}} />);
+    // Default (no provider) context is Korean, so the gear's aria-label is '설정'.
+    fireEvent.click(screen.getByLabelText('설정'));
+    expect(onOpenSettings).toHaveBeenCalledOnce();
   });
 });
