@@ -32,3 +32,12 @@ describe('LangProvider', () => {
     expect(screen.getByText('다듬기')).toBeInTheDocument();
   });
 });
+
+describe('settings strings', () => {
+  it('has settingsTitle/settingsGeneral in both languages', () => {
+    expect(DICTS.en.settingsTitle).toBe('Settings');
+    expect(DICTS.en.settingsGeneral).toBe('General');
+    expect(DICTS.ko.settingsTitle).toBe('설정');
+    expect(DICTS.ko.settingsGeneral).toBe('일반');
+  });
+});

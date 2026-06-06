@@ -1,0 +1,124 @@
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { useState } from 'react';
+import type { Lang } from '../../src/domain/types';
+import { LangProvider } from '../../src/i18n';
+import { GeneralSettings } from '../../src/ui/GeneralSettings';
+import { SettingsModal } from '../../src/ui/SettingsModal';
+import { Dashboard } from '../../src/ui/Dashboard';
+
+describe('GeneralSettings', () => {
+  it('renders the language label and EN/한국어 buttons', () => {
+    render(
+      <LangProvider lang="en" setLang={() => {}}>
+        <GeneralSettings />
+      </LangProvider>,
+    );
+    expect(screen.getByText('Language')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'EN' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '한국어' })).toBeInTheDocument();
+  });
+
+  it('calls setLang when a language button is clicked', () => {
+    const setLang = vi.fn();
+    render(
+      <LangProvider lang="en" setLang={setLang}>
+        <GeneralSettings />
+      </LangProvider>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: '한국어' }));
+    expect(setLang).toHaveBeenCalledWith('ko');
+  });
+});
+
+describe('SettingsModal', () => {
+  function renderModal(onClose = () => {}) {
+    return render(
+      <LangProvider lang="en" setLang={() => {}}>
+        <SettingsModal onClose={onClose} />
+      </LangProvider>,
+    );
+  }
+
+  it('renders the overlay, title and General nav item', () => {
+    renderModal();
+    expect(screen.getByTestId('settings-overlay')).toBeInTheDocument();
+    expect(screen.getByText('Settings')).toBeInTheDocument();
+    expect(screen.getByText('General')).toBeInTheDocument();
+  });
+
+  it('exposes a labelled, modal dialog role', () => {
+    renderModal();
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toHaveAttribute('aria-modal', 'true');
+    expect(dialog).toHaveAccessibleName('Settings');
+  });
+
+  it('calls onClose on Escape', () => {
+    const onClose = vi.fn();
+    renderModal(onClose);
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(onClose).toHaveBeenCalledOnce();
+  });
+
+  it('calls onClose when the overlay backdrop is clicked', () => {
+    const onClose = vi.fn();
+    renderModal(onClose);
+    fireEvent.click(screen.getByTestId('settings-overlay'));
+    expect(onClose).toHaveBeenCalledOnce();
+  });
+
+  it('does NOT call onClose when clicking inside the modal', () => {
+    const onClose = vi.fn();
+    renderModal(onClose);
+    fireEvent.click(screen.getByText('General'));
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it('switches language live from inside the modal', () => {
+    function Harness() {
+      const [lang, setLang] = useState<Lang>('en');
+      return (
+        <LangProvider lang={lang} setLang={setLang}>
+          <SettingsModal onClose={() => {}} />
+        </LangProvider>
+      );
+    }
+    render(<Harness />);
+    expect(screen.getByText('General')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '한국어' }));
+    expect(screen.getByText('일반')).toBeInTheDocument(); // General -> 일반
+    fireEvent.click(screen.getByRole('button', { name: 'EN' }));
+    expect(screen.getByText('General')).toBeInTheDocument();
+  });
+});
+
+describe('Dashboard settings integration', () => {
+  function renderDashboard() {
+    return render(
+      <LangProvider lang="en" setLang={() => {}}>
+        <Dashboard
+          projects={[]}
+          lastSyncAt="2026-06-01T00:00:00Z"
+          offline={false}
+          onSync={async () => {}}
+          onSaveManual={async () => {}}
+        />
+      </LangProvider>,
+    );
+  }
+
+  it('opens the settings modal when the gear is clicked', () => {
+    renderDashboard();
+    expect(screen.queryByTestId('settings-overlay')).toBeNull();
+    fireEvent.click(screen.getByLabelText('Settings')); // en context: gear aria-label = 'Settings'
+    expect(screen.getByTestId('settings-overlay')).toBeInTheDocument();
+  });
+
+  it('closes the modal on Escape', () => {
+    renderDashboard();
+    fireEvent.click(screen.getByLabelText('Settings'));
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(screen.queryByTestId('settings-overlay')).toBeNull();
+  });
+});

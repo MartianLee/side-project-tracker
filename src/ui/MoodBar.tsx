@@ -1,12 +1,12 @@
 import { MoodFilter, SortMode } from '../domain/filter';
 import { FUN_TYPES, FunType } from '../domain/types';
-import { useLang, LANGS, LANG_LABEL } from '../i18n';
+import { useLang } from '../i18n';
 import { TagChip } from './TagChip';
 
 const SORT_MODES: SortMode[] = ['recent', 'launched', 'neglect'];
 
 export function MoodBar({
-  filter, allTopics, sortMode, lastSyncAt, offline, onChange, onSortChange, onSync, onDice,
+  filter, allTopics, sortMode, lastSyncAt, offline, onChange, onSortChange, onSync, onDice, onOpenSettings,
 }: {
   filter: MoodFilter;
   allTopics: string[];
@@ -17,8 +17,9 @@ export function MoodBar({
   onSortChange: (m: SortMode) => void;
   onSync: () => void;
   onDice: () => void;
+  onOpenSettings: () => void;
 }) {
-  const { t, lang, setLang } = useLang();
+  const { t, lang } = useLang();
 
   function toggleFun(ft: FunType) {
     onChange({
@@ -64,13 +65,7 @@ export function MoodBar({
       <span className={`sync-status${offline ? ' is-offline' : ''}`}>
         {offline ? t.offline : t.lastSync(new Date(lastSyncAt).toLocaleString(lang === 'ko' ? 'ko-KR' : 'en-US'))}
       </span>
-      <span className="lang-toggle" aria-label={t.language}>
-        {LANGS.map((l) => (
-          <button key={l} type="button" className={`seg${lang === l ? ' is-on' : ''}`} onClick={() => setLang(l)}>
-            {LANG_LABEL[l]}
-          </button>
-        ))}
-      </span>
+      <button type="button" className="btn" aria-label={t.settingsTitle} onClick={onOpenSettings}>⚙️</button>
     </div>
   );
 }
