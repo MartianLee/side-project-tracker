@@ -56,6 +56,9 @@ export interface Dict {
   // enums (display only — 저장값/CSS키는 한글 유지)
   stage: Record<Stage, string>;
   funLabel: Record<FunType, string>; // 이모지 포함
+  // settings
+  settingsTitle: string;
+  settingsGeneral: string;
   // app
   error: (e: string) => string;
   loading: string;
@@ -100,6 +103,8 @@ const ko: Dict = {
   close: '닫기',
   stage: { '아이디어': '아이디어', '개발중': '개발중', '다듬기': '다듬기', '유지·운영': '유지·운영', '보류': '보류' },
   funLabel: { '신규창작': '🆕 신규창작', '업그레이드': '⬆️ 업그레이드', '실험': '🧪 실험', '마무리': '🏁 마무리' },
+  settingsTitle: '설정',
+  settingsGeneral: '일반',
   error: (e) => `오류: ${e}`,
   loading: '불러오는 중…',
 };
@@ -143,6 +148,8 @@ const en: Dict = {
   close: 'Close',
   stage: { '아이디어': 'Idea', '개발중': 'Building', '다듬기': 'Polishing', '유지·운영': 'Maintenance', '보류': 'On hold' },
   funLabel: { '신규창작': '🆕 New', '업그레이드': '⬆️ Upgrade', '실험': '🧪 Experiment', '마무리': '🏁 Wrap-up' },
+  settingsTitle: 'Settings',
+  settingsGeneral: 'General',
   error: (e) => `Error: ${e}`,
   loading: 'Loading…',
 };
